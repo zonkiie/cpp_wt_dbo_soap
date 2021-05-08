@@ -1,4 +1,4 @@
-AM_INIT_AUTOMAKE([1.11 silent-rules])
+AM_INIT_AUTOMAKE([1.11 silent-rules subdir-objects])
 
 SUBDIRS = build
 

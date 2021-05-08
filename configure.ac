@@ -1,6 +1,6 @@
 AC_INIT(cpp_wt_dbo_soap, alpha1)
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_LANG_PUSH([C])
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADERS([Wt/Dbo/Dbo.h])
