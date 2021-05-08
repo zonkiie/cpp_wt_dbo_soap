@@ -1,5 +1,5 @@
 # How to install Wt
-I've choosen /opt/Wt for installation because it can simply removed.
+I've choosen /opt/Wt for installation because it can be simply removed.
     cd /dir/to/compile
     wget -O wt-4.5.0.tar.gz https://github.com/emweb/wt/archive/4.5.0.tar.gz
     tar -xavf wt-4.5.0.tar.gz

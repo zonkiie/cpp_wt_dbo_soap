@@ -1,0 +1,10 @@
+AC_INIT
+
+AC_LANG_PUSH([C])
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADERS([Wt/Dbo/Dbo.h])
+AC_CHECK_HEADERS([Wt/Dbo/backend/Sqlite3.h])
+AC_LANG_POP([C++])
+AC_LANG_POP([C])
+
+AC_OUTPUT
