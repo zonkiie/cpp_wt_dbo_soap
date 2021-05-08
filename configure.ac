@@ -1,5 +1,3 @@
-AC_CONFIG_COMMANDS([create_builddir], [mkdir build])
-
 AC_INIT(cpp_wt_dbo_soap, alpha1)
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
