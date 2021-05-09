@@ -33,3 +33,6 @@
 
 # Build Directory
 build/
+
+src/.deps
+src/.dirstamp
