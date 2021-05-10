@@ -14,6 +14,9 @@ using std::list;
 using std::vector;
 using namespace boost::uuids;
 
+class User;
+class Post;
+
 /*****
  * Dbo tutorial section 2. Mapping a single class
  *****/
