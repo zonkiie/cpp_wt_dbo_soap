@@ -12,16 +12,25 @@ namespace dbo = Wt::Dbo;
 using std::string;
 using std::list;
 using std::vector;
+using std::optional;
 using namespace boost::uuids;
 
 class User;
 class Post;
 
+
+class CreateAble
+{
+public:
+	optional<string> createString() = {};
+}
+
 /*****
  * Dbo tutorial section 2. Mapping a single class
  *****/
 
-class User {
+class User: public CreateAble
+{
 public:
 	string id;
 	string name;
@@ -38,9 +47,14 @@ public:
 		dbo::field	(a,	ctime,		"ctime");
 		dbo::hasMany(a,	posts, dbo::ManyToOne, "user");
 	}
+	
+	optional<string> createString()
+	{
+		return "CREATE TABLE \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
+	}
 };
 
-class Post
+class Post: public CreateAble
 {
 public:
 	string id;
@@ -58,6 +72,11 @@ public:
 		dbo::field	(a,	ctime,	"ctime");
         dbo::belongsTo(a,	user, "user");
     }
+    
+	optional<string> createString()
+	{
+		return "CREATE TABLE \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
+	}
 };
 
 const char * uuid_cstr()
