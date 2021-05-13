@@ -50,7 +50,7 @@ public:
 	
 	optional<string> createString()
 	{
-		return "CREATE TABLE \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
 	}
 };
 
@@ -75,7 +75,7 @@ public:
     
 	optional<string> createString()
 	{
-		return "CREATE TABLE \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
 	}
 };
 
