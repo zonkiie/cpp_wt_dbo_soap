@@ -89,6 +89,7 @@ const char * uuid_cstr()
 	return s.c_str();
 }
 
+/*
 namespace Wt {
 	namespace Dbo {
 
@@ -116,7 +117,7 @@ namespace Wt {
 
 	}
 }
-
+*/
 
 void run()
 {
