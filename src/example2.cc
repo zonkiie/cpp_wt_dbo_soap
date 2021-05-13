@@ -179,7 +179,7 @@ void run()
 		std::cerr << "We have " << users.size() << " users:" << std::endl;
 
 		for (const dbo::ptr<User> &user : users)
-			std::cerr << " user " << user->name << " with karma of " << user->karma << std::endl;
+			std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
 	}
 
 	/*****
