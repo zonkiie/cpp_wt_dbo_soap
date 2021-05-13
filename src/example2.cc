@@ -10,9 +10,12 @@
 #include <vector>
 #include <list>
 #include <ctime>
+#include <iostream>
+#include <iomanip>
 
 namespace dbo = Wt::Dbo;
 using std::string;
+using std::ostringstream;
 using std::list;
 using std::vector;
 using std::optional;
@@ -20,7 +23,10 @@ using std::cin;
 using std::cout;
 using std::cerr;
 using std::to_string;
+using std::setw;
+using std::setfill;
 using namespace boost::uuids;
+using Wt::WDateTime;
 
 class User;
 class Post;
@@ -37,28 +43,18 @@ namespace Wt {
 		struct dbo_traits<User> : public dbo_default_traits {
 			typedef std::string IdType;
 
-			static IdType invalidId() {
-				return std::string();
-			}
-
+			static IdType invalidId() { return std::string(); }
 			static const char *surrogateIdField() { return 0; }
-            static const char *versionField() {
-                return 0;
-            }
+            static const char *versionField() { return 0; }
 		};
 
 		template<>
 		struct dbo_traits<Post> : public dbo_default_traits {
 			typedef std::string IdType;
 
-			static IdType invalidId() {
-				return std::string();
-			}
-
+			static IdType invalidId() { return std::string(); }
 			static const char *surrogateIdField() { return 0; }
-            static const char *versionField() {
-                return 0;
-            }
+            static const char *versionField() { return 0;}
 		};
 	}
 }
@@ -78,7 +74,10 @@ string current_timestamp_string()
 
 string timestamp_to_string(tm *ltm)
 {
-	return string(to_string(1900 + ltm->tm_year) + "-" + to_string(1 + ltm->tm_mon) + "-" + to_string(ltm->tm_mday) + " " + to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec));
+	//return string(to_string(1900 + ltm->tm_year) + "-" + to_string(1 + ltm->tm_mon) + "-" + to_string(ltm->tm_mday) + " " + to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec));
+	ostringstream ostr;
+	ostr << setw(4) << setfill('0') << 1900 + ltm->tm_year << setw(1) << "-" << setw(2) << 1 + ltm->tm_mon << setw(1) << "-" << setw(2) << ltm->tm_mday << setw(1) << " " << setw(2) << ltm->tm_hour << setw(1) << ":" << setw(2) << ltm->tm_min << setw(1) << ":" << setw(2) << ltm->tm_sec;
+	return ostr.str();
 }
 
 /*****
@@ -91,7 +90,7 @@ public:
 	string id;
 	string name;
 	string password;
-	/*Wt::WDateTime*/ string ctime;
+	string ctime;
 	dbo::collection< dbo::ptr<Post> > posts;
 
 	template<class Action>
@@ -118,7 +117,7 @@ public:
 	string id;
 	string title;
 	string body;
-	/*Wt::WDateTime*/ string ctime;
+	string ctime;
 	string owner_id;
 	dbo::ptr<User> user;
     template<class Action>
@@ -191,6 +190,7 @@ void run()
 		user->name = "Joe";
 		user->password = "Secret";
 		user->ctime = current_timestamp_string();
+		//user->ctime = WDateTime::currentDateTime();
 
 		dbo::ptr<User> userPtr = session.add(std::move(user));
 	}
@@ -204,7 +204,7 @@ void run()
 
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
 
-		std::cerr << "Joe has ctime: " << joe->ctime/*.toString()*/ << std::endl;
+		std::cerr << "Joe has ctime: " << joe->ctime << std::endl;
 		
 		cerr << "Fetching joe2\n";
 
@@ -226,7 +226,7 @@ void run()
 		std::cerr << "We have " << users.size() << " users:" << std::endl;
 
 		for (const dbo::ptr<User> &user : users)
-			std::cerr << " user " << user->name << " with ctime " << user->ctime/*.toString()*/ << std::endl;
+			std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
 	}
 
 	/*****
