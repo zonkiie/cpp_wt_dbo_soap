@@ -143,8 +143,8 @@ void run()
 	* Try to create the schema (will fail if already exists).
 	*/
 	//session.createTables();
-	session.execute(User::createTableString());
-	session.execute(Post::createTableString());
+	session.execute(User::createTableString().value());
+	session.execute(Post::createTableString().value());
 
 	{
 		dbo::Transaction transaction(session);
@@ -165,7 +165,7 @@ void run()
 
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
 
-		std::cerr << "Joe has karma: " << joe->karma << std::endl;
+		std::cerr << "Joe has ctime: " << joe->ctime.toString() << std::endl;
 
 		dbo::ptr<User> joe2 = session.query< dbo::ptr<User> >("select u from user u").where("name = ?").bind("Joe");
 
@@ -182,7 +182,7 @@ void run()
 		std::cerr << "We have " << users.size() << " users:" << std::endl;
 
 		for (const dbo::ptr<User> &user : users)
-			std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
+			std::cerr << " user " << user->name << " with ctime " << user->ctime.toString() << std::endl;
 	}
 
 	/*****
