@@ -1,5 +1,6 @@
 #include <Wt/Dbo/Dbo.h>
 #include <Wt/Dbo/backend/Sqlite3.h>
+#include <Wt/WDateTime.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -24,7 +25,7 @@ class CreateAble
 {
 public:
 	optional<string> createTableString() { return {}; }
-}
+};
 
 /*****
  * Dbo tutorial section 2. Mapping a single class
