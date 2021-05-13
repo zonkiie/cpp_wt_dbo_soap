@@ -26,6 +26,9 @@ class User;
 class Post;
 string current_timestamp_string();
 string timestamp_to_string(tm *ltm);
+const char * uuid_cstr();
+string uuid_str();
+
 
 namespace Wt {
 	namespace Dbo {
@@ -75,7 +78,7 @@ string current_timestamp_string()
 
 string timestamp_to_string(tm *ltm)
 {
-	return string(to_string(ltm->tm_year) + "-" + to_string(ltm->tm_mon) + "-" + to_string(ltm->tm_mday) + " " + to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec));
+	return string(to_string(1900 + ltm->tm_year) + "-" + to_string(1 + ltm->tm_mon) + "-" + to_string(ltm->tm_mday) + " " + to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec));
 }
 
 /*****
@@ -105,6 +108,8 @@ public:
 	{
 		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp not null default current_timestamp);";
 	}
+	
+	User(): id(uuid_str()) {}
 };
 
 class Post: public CreateAble
@@ -130,6 +135,7 @@ public:
 	{
 		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp not null default current_timestamp);";
 	}
+	Post(): id(uuid_str()) {}
 };
 
 const char * uuid_cstr()
@@ -138,6 +144,13 @@ const char * uuid_cstr()
 	uuid id = gen();
 	string s = to_string(id);
 	return s.c_str();
+}
+
+string uuid_str()
+{
+	random_generator gen;
+	uuid id = gen();
+	return to_string(id);
 }
 
 
@@ -231,8 +244,7 @@ void run()
 	{
 		dbo::Transaction transaction(session);
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
-		if (joe)
-		joe.remove();
+		if (joe) joe.remove();
 	}
 
 	{
