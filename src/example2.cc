@@ -20,6 +20,38 @@ using namespace boost::uuids;
 class User;
 class Post;
 
+namespace Wt {
+	namespace Dbo {
+
+		template<>
+		struct dbo_traits<User> : public dbo_default_traits {
+			typedef std::string IdType;
+
+			static IdType invalidId() {
+				return std::string();
+			}
+
+			static const char *surrogateIdField() { return 0; }
+            static const char *versionField() {
+                return 0;
+            }
+		};
+
+		template<>
+		struct dbo_traits<Post> : public dbo_default_traits {
+			typedef std::string IdType;
+
+			static IdType invalidId() {
+				return std::string();
+			}
+
+			static const char *surrogateIdField() { return 0; }
+            static const char *versionField() {
+                return 0;
+            }
+		};
+	}
+}
 
 class CreateAble
 {
@@ -37,13 +69,13 @@ public:
 	string id;
 	string name;
 	string password;
-	Wt::WDateTime ctime;
+	/*Wt::WDateTime*/ string ctime;
 	dbo::collection< dbo::ptr<Post> > posts;
 
 	template<class Action>
 	void persist(Action& a)
 	{
-		dbo::id		(a, id, 		"id");
+		dbo::id		(a, id, 		"id", 36);
 		dbo::field	(a,	name,		"name");
 		dbo::field	(a,	password,	"password");
 		dbo::field	(a,	ctime,		"ctime");
@@ -62,13 +94,13 @@ public:
 	string id;
 	string title;
 	string body;
-	Wt::WDateTime ctime;
+	/*Wt::WDateTime*/ string ctime;
 	string owner_id;
 	dbo::ptr<User> user;
     template<class Action>
     void persist(Action& a)
     {
-		dbo::id		(a,	id,		"id");
+		dbo::id		(a,	id,		"id", 36);
 		dbo::field	(a,	title,	"title");
 		dbo::field	(a,	body, 	"body");
 		dbo::field	(a,	ctime,	"ctime");
@@ -89,35 +121,6 @@ const char * uuid_cstr()
 	return s.c_str();
 }
 
-/*
-namespace Wt {
-	namespace Dbo {
-
-		template<>
-		struct dbo_traits<User> : public dbo_default_traits {
-			typedef std::string IdType;
-
-			static IdType invalidId() {
-				return std::string();
-			}
-
-			static const char *surrogateIdField() { return 0; }
-		};
-
-		template<>
-		struct dbo_traits<Post> : public dbo_default_traits {
-			typedef std::string IdType;
-
-			static IdType invalidId() {
-				return std::string();
-			}
-
-			static const char *surrogateIdField() { return 0; }
-		};
-
-	}
-}
-*/
 
 void run()
 {
@@ -143,9 +146,12 @@ void run()
 	* Try to create the schema (will fail if already exists).
 	*/
 	//session.createTables();
-	session.execute(User::createTableString().value());
-	session.execute(Post::createTableString().value());
-
+	{
+		dbo::Transaction transaction(session);
+		session.execute(User::createTableString().value());
+		session.execute(Post::createTableString().value());
+	}
+	
 	{
 		dbo::Transaction transaction(session);
 
@@ -165,7 +171,7 @@ void run()
 
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
 
-		std::cerr << "Joe has ctime: " << joe->ctime.toString() << std::endl;
+		std::cerr << "Joe has ctime: " << joe->ctime/*.toString()*/ << std::endl;
 
 		dbo::ptr<User> joe2 = session.query< dbo::ptr<User> >("select u from user u").where("name = ?").bind("Joe");
 
@@ -182,7 +188,7 @@ void run()
 		std::cerr << "We have " << users.size() << " users:" << std::endl;
 
 		for (const dbo::ptr<User> &user : users)
-			std::cerr << " user " << user->name << " with ctime " << user->ctime.toString() << std::endl;
+			std::cerr << " user " << user->name << " with ctime " << user->ctime/*.toString()*/ << std::endl;
 	}
 
 	/*****
