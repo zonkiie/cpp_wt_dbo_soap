@@ -142,8 +142,8 @@ void run()
 	* Try to create the schema (will fail if already exists).
 	*/
 	//session.createTables();
-	session.execute(User.createTableString());
-	session.execute(Post.createTableString());
+	session.execute(User::createTableString());
+	session.execute(Post::createTableString());
 
 	{
 		dbo::Transaction transaction(session);
