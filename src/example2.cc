@@ -22,7 +22,7 @@ class Post;
 class CreateAble
 {
 public:
-	optional<string> createString() = {};
+	optional<string> createTableString() = {};
 }
 
 /*****
@@ -48,7 +48,7 @@ public:
 		dbo::hasMany(a,	posts, dbo::ManyToOne, "user");
 	}
 	
-	static optional<string> createString()
+	static optional<string> createTableString()
 	{
 		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
 	}
@@ -73,7 +73,7 @@ public:
         dbo::belongsTo(a,	user, "user");
     }
     
-	static optional<string> createString()
+	static optional<string> createTableString()
 	{
 		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
 	}
@@ -139,7 +139,9 @@ void run()
 	/*
 	* Try to create the schema (will fail if already exists).
 	*/
-	session.createTables();
+	//session.createTables();
+	session.execute(User.createTableString());
+	session.execute(Post.createTableString());
 
 	{
 		dbo::Transaction transaction(session);
@@ -147,8 +149,6 @@ void run()
 		std::unique_ptr<User> user{new User()};
 		user->name = "Joe";
 		user->password = "Secret";
-		user->role = Role::Visitor;
-		user->karma = 13;
 
 		dbo::ptr<User> userPtr = session.add(std::move(user));
 	}
@@ -191,7 +191,6 @@ void run()
 
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
 
-		joe.modify()->karma++;
 		joe.modify()->password = "public";
 	}
 
