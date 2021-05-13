@@ -48,7 +48,7 @@ public:
 		dbo::hasMany(a,	posts, dbo::ManyToOne, "user");
 	}
 	
-	optional<string> createString()
+	static optional<string> createString()
 	{
 		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
 	}
@@ -73,7 +73,7 @@ public:
         dbo::belongsTo(a,	user, "user");
     }
     
-	optional<string> createString()
+	static optional<string> createString()
 	{
 		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
 	}
