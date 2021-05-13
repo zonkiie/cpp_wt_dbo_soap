@@ -23,7 +23,7 @@ class Post;
 class CreateAble
 {
 public:
-	optional<string> createTableString() = {};
+	optional<string> createTableString() { return {}; }
 }
 
 /*****
