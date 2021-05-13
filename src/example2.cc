@@ -9,16 +9,23 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <ctime>
 
 namespace dbo = Wt::Dbo;
 using std::string;
 using std::list;
 using std::vector;
 using std::optional;
+using std::cin;
+using std::cout;
+using std::cerr;
+using std::to_string;
 using namespace boost::uuids;
 
 class User;
 class Post;
+string current_timestamp_string();
+string timestamp_to_string(tm *ltm);
 
 namespace Wt {
 	namespace Dbo {
@@ -59,6 +66,18 @@ public:
 	optional<string> createTableString() { return {}; }
 };
 
+string current_timestamp_string()
+{
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	return timestamp_to_string(ltm);
+}
+
+string timestamp_to_string(tm *ltm)
+{
+	return string(to_string(ltm->tm_year) + "-" + to_string(ltm->tm_mon) + "-" + to_string(ltm->tm_mday) + " " + to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec));
+}
+
 /*****
  * Dbo tutorial section 2. Mapping a single class
  *****/
@@ -84,7 +103,7 @@ public:
 	
 	static optional<string> createTableString()
 	{
-		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp not null default current_timestamp);";
 	}
 };
 
@@ -109,7 +128,7 @@ public:
     
 	static optional<string> createTableString()
 	{
-		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp not null default current_timestamp);";
 	}
 };
 
@@ -158,6 +177,7 @@ void run()
 		std::unique_ptr<User> user{new User()};
 		user->name = "Joe";
 		user->password = "Secret";
+		user->ctime = current_timestamp_string();
 
 		dbo::ptr<User> userPtr = session.add(std::move(user));
 	}
@@ -172,11 +192,16 @@ void run()
 		dbo::ptr<User> joe = session.find<User>().where("name = ?").bind("Joe");
 
 		std::cerr << "Joe has ctime: " << joe->ctime/*.toString()*/ << std::endl;
+		
+		cerr << "Fetching joe2\n";
 
 		dbo::ptr<User> joe2 = session.query< dbo::ptr<User> >("select u from user u").where("name = ?").bind("Joe");
+		
+		cerr << "Joe 2 fetched.\n";
 
 		int count = session.query<int>("select count(1) from user").where("name = ?").bind("Joe");
 	}
+	cerr << "Fetch\n";
 
 	{
 		dbo::Transaction transaction(session);
