@@ -118,7 +118,7 @@ public:
 	string title;
 	string body;
 	string ctime;
-	string owner_id;
+	string user_id;
 	dbo::ptr<User> user;
     template<class Action>
     void persist(Action& a)
@@ -132,7 +132,7 @@ public:
     
 	static optional<string> createTableString()
 	{
-		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, owner_id text not null, ctime timestamp not null default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, user_id text not null, ctime timestamp not null default current_timestamp, constraint \"fk_post_user\" foreign key (\"user_id\") references \"user\" (\"id\") deferrable initially deferred);";
 	}
 	Post(): id(uuid_str()) {}
 };
@@ -191,8 +191,14 @@ void run()
 		user->password = "Secret";
 		user->ctime = current_timestamp_string();
 		//user->ctime = WDateTime::currentDateTime();
-
+		std::unique_ptr<Post> post{new Post()};
+		post->title = "This is the Title!";
+		post->body = "This is the Body!";
+		post->ctime = current_timestamp_string();
 		dbo::ptr<User> userPtr = session.add(std::move(user));
+		post->user = userPtr;
+		dbo::ptr<Post> postPtr = session.add(std::move(post));
+		
 	}
 
 	/*****
