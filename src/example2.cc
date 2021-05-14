@@ -105,7 +105,7 @@ public:
 	
 	static optional<string> createTableString()
 	{
-		return "CREATE TABLE IF NOT EXISTS \"user\" (id text not null primary key, name text not null, password text, ctime timestamp not null default current_timestamp);";
+		return "CREATE TABLE IF NOT EXISTS \"user\" (id text NOT NULL PRIMARY KEY, name text NOT NULL, password text NOT NULL, ctime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	}
 	
 	User(): id(uuid_str()) {}
@@ -132,7 +132,7 @@ public:
     
 	static optional<string> createTableString()
 	{
-		return "CREATE TABLE IF NOT EXISTS \"post\" (id text not null primary key, title text not null, body text, user_id text not null, ctime timestamp not null default current_timestamp, constraint \"fk_post_user\" foreign key (\"user_id\") references \"user\" (\"id\") deferrable initially deferred);";
+		return "CREATE TABLE IF NOT EXISTS \"post\" (id text NOT NULL PRIMARY KEY, title text NOT NULL, body text, user_id text NOT NULL, ctime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT \"fk_post_user\" FOREIGN KEY (\"user_id\") REFERENCES \"user\" (\"id\") ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED);";
 	}
 	Post(): id(uuid_str()) {}
 };
