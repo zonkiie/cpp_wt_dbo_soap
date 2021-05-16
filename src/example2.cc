@@ -12,6 +12,8 @@
 #include <ctime>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <fstream>
 
 namespace dbo = Wt::Dbo;
 using std::string;
@@ -25,6 +27,8 @@ using std::cerr;
 using std::to_string;
 using std::setw;
 using std::setfill;
+using std::endl;
+using std::ios_base;
 using namespace boost::uuids;
 using Wt::WDateTime;
 
@@ -137,6 +141,24 @@ public:
 	Post(): id(uuid_str()) {}
 };
 
+std::ostream& operator<<(std::ostream& os, Post const& post)
+{
+	os << "{id:" << post.id << ", Title:" << post.title << ", Body:" << post.body << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, User const& user)
+{
+	os << "{id:" << user.id << ", name:" << user.name << ", posts:[";
+	typedef dbo::collection< dbo::ptr<Post> > Posts;
+	for (Posts::const_iterator i = user.posts.begin(); i != user.posts.end(); ++i){
+			os << **i << ",";
+		}
+	os << "]" << endl;
+	return os;
+}
+
+
 const char * uuid_cstr()
 {
 	random_generator gen;
@@ -166,7 +188,7 @@ void run()
 	* can replace this with an actual filename for actual persistence.
 	*/
 	std::unique_ptr<dbo::backend::Sqlite3> sqlite3(new dbo::backend::Sqlite3(":memory:"));
-	sqlite3->setProperty("show-queries", "true");
+	//sqlite3->setProperty("show-queries", "true");
 	dbo::Session session;
 	session.setConnection(std::move(sqlite3));
 
@@ -232,7 +254,9 @@ void run()
 		std::cerr << "We have " << users.size() << " users:" << std::endl;
 
 		for (const dbo::ptr<User> &user : users)
-			std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
+			//std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
+			std::cerr << *user << endl;
+		
 	}
 
 	/*****
