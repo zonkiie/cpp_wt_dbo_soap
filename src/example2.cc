@@ -96,6 +96,7 @@ public:
 	string password;
 	string ctime;
 	dbo::collection< dbo::ptr<Post> > posts;
+	list<Post> postsList;
 
 	template<class Action>
 	void persist(Action& a)
@@ -105,6 +106,13 @@ public:
 		dbo::field	(a,	password,	"password");
 		dbo::field	(a,	ctime,		"ctime");
 		dbo::hasMany(a,	posts, dbo::ManyToOne, "user");
+		if(a.getsValue()) {
+			//cerr << "User.getsValue()" << endl;
+		}
+		if(a.setsValue()) {
+			//cerr << "User.setsValue()" << endl;
+			createPostList();
+		}
 	}
 	
 	static optional<string> createTableString()
@@ -113,6 +121,15 @@ public:
 	}
 	
 	User(): id(uuid_str()) {}
+	
+	void createPostList()
+	{
+		typedef dbo::collection< dbo::ptr<Post> > Posts;
+		for (Posts::const_iterator i = posts.begin(); i != posts.end(); ++i){
+			//postsList.push_back(**i);
+		}
+		
+	}
 };
 
 class Post: public CreateAble
@@ -132,6 +149,12 @@ public:
 		dbo::field	(a,	body, 	"body");
 		dbo::field	(a,	ctime,	"ctime");
         dbo::belongsTo(a,	user, "user");
+		if(a.getsValue()) {
+			//cerr << "Post.getsValue()" << endl;
+		}
+		if(a.setsValue()) {
+			//cerr << "Post.setsValue()" << endl;
+		}
     }
     
 	static optional<string> createTableString()
