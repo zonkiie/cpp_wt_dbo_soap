@@ -1,5 +1,6 @@
 #include <Wt/Dbo/Dbo.h>
 #include <Wt/Dbo/backend/Sqlite3.h>
+#include <Wt/Dbo/Json.h>
 #include <Wt/WDateTime.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -31,6 +32,7 @@ using std::endl;
 using std::ios_base;
 using namespace boost::uuids;
 using Wt::WDateTime;
+using dbo::JsonSerializer;
 
 class User;
 class Post;
@@ -274,11 +276,17 @@ void run()
 
 		Users users = session.find<User>();
 
-		std::cerr << "We have " << users.size() << " users:" << std::endl;
+		/*std::cerr << "We have " << users.size() << " users:" << std::endl;
 
+		// Example for simple serializing via << operator
 		for (const dbo::ptr<User> &user : users)
 			//std::cerr << " user " << user->name << " with ctime " << user->ctime << std::endl;
 			std::cerr << *user << endl;
+		*/
+		// Built-in Serializer
+		JsonSerializer jsz(cout);
+		jsz.serialize(users);
+		
 		
 	}
 
